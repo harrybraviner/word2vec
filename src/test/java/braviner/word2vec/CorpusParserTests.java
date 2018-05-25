@@ -31,4 +31,20 @@ public class CorpusParserTests {
         Assert.assertEquals(Optional.of("[NUM]"), Normalizer.normalize("123"));
     }
 
+    @Test
+    public void ParserMultipleSentences() {
+        // These strings include some punctuation that we wish to be stripped out
+        String[] multipleSentences = new String[] {
+                "Foo bar baz - the future fox",
+                "The quick brown fox jumped over the lazy fox.",
+                "Never give up; never surrender!"
+        };
+
+        CorpusParser parser = CorpusParser.buildFromSentenceStream(Arrays.stream(multipleSentences));
+
+        Assert.assertEquals(15, parser.getWordCount());
+        Assert.assertEquals("the", parser.getWordFromIndex(3));
+        Assert.assertEquals("surrender", parser.getWordFromIndex(14));
+        Assert.assertEquals(2, parser.getIndexFromWord("baz"));
+    }
 }
