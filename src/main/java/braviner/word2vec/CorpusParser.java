@@ -3,6 +3,7 @@ package braviner.word2vec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class CorpusParser {
@@ -47,23 +48,22 @@ public class CorpusParser {
     }
 
     /**
-     * Normalizes the strings of the array in-place.
-     * @param words An array of un-normalized words.
+     * Normalizes the strings of the Stream.
+     * @param words A Stream of unnormalized words.
+     * @return A Stream, possibly of fewer elements.
      */
-    private void normalizeStrings(String[] words) {
-        for (int i=0; i<words.length; i++) {
-            words[i] = normalize(words[i]);
-        }
+    private Stream<String> normalizeStrings(Stream<String> words) {
+        return words.map(Normalizer::normalize).filter(Optional::isPresent).map(Optional::get);
     }
 
     private void addSentenceToCorpus(String sentence) {
         String[] tokenizedSentence = tokenizeSentence(sentence);
-        normalizeStrings(tokenizedSentence);
+        String[] normalizedSentence = normalizeStrings(Arrays.stream(tokenizedSentence)).toArray(String[]::new);
 
         // Convert the sentence to a representation as indices for compressed storage.
-        int[] sentenceAsTokenIndices = new int[tokenizedSentence.length];
-        for (int i=0; i<tokenizedSentence.length; i++) {
-            String word = tokenizedSentence[i];
+        int[] sentenceAsTokenIndices = new int[normalizedSentence.length];
+        for (int i=0; i<normalizedSentence.length; i++) {
+            String word = normalizedSentence[i];
             int tokenIndex;
             if (!wordToIndex.containsKey(word)) {
                 wordToIndex.put(word, numDistinctWords);
