@@ -19,6 +19,9 @@ public class CorpusParserTests {
         Assert.assertEquals("the", parser.getWordFromIndex(0));
         Assert.assertEquals("fox", parser.getWordFromIndex(3));
         Assert.assertEquals(1, parser.getIndexFromWord("quick"));
+
+        Assert.assertEquals(1, parser.getOccurrenceCountOfIndex(parser.getIndexFromWord("quick")));
+        Assert.assertEquals(2, parser.getOccurrenceCountOfIndex(parser.getIndexFromWord("fox")));
     }
 
     @Test
@@ -62,5 +65,6 @@ public class CorpusParserTests {
         Assert.assertArrayEquals(new int[] {3, 6, 7, 5, 8, 9, 3, 10, 5}, parser.getSentenceAsIndices(1));
         Assert.assertArrayEquals(new int[] {11, 12, 13, 11, 14}, parser.getSentenceAsIndices(2));
 
+        Assert.assertEquals(3, parser.getOccurrenceCountOfIndex(parser.getIndexFromWord("fox")));
     }
 }

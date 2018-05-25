@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class CorpusParser {
@@ -12,6 +13,8 @@ public class CorpusParser {
     private HashMap<Integer, String> indexToWord = new HashMap<>();
     private ArrayList<int[]> sentences = new ArrayList<>();
     private int numDistinctWords = 0;
+
+    private ArrayList<AtomicInteger> wordCounts = new ArrayList<>();    // Counts number of occurrences of each token
 
     private CorpusParser() {
 
@@ -31,6 +34,10 @@ public class CorpusParser {
 
     public int getIndexFromWord(String word) {
         return wordToIndex.get(word);
+    }
+
+    public int getOccurrenceCountOfIndex(int index) {
+        return wordCounts.get(index).get();
     }
 
     private String[] tokenizeSentence(String sentence) {
@@ -66,12 +73,15 @@ public class CorpusParser {
             String word = normalizedSentence[i];
             int tokenIndex;
             if (!wordToIndex.containsKey(word)) {
+                // First time this token has been seen
                 wordToIndex.put(word, numDistinctWords);
                 indexToWord.put(numDistinctWords, word);
+                wordCounts.add(new AtomicInteger(1));
                 tokenIndex = numDistinctWords;
                 numDistinctWords++;
             } else {
                 tokenIndex = wordToIndex.get(word);
+                wordCounts.get(tokenIndex).incrementAndGet();
             }
             sentenceAsTokenIndices[i] = tokenIndex;
         }
