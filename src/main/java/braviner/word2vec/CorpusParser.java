@@ -17,8 +17,8 @@ public class CorpusParser {
 
     }
 
-    public void getSentenceAsIndices(int index) {
-
+    public int[] getSentenceAsIndices(int index) {
+        return sentences.get(index);
     }
 
     public int getWordCount() {

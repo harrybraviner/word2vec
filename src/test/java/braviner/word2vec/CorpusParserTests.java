@@ -47,4 +47,20 @@ public class CorpusParserTests {
         Assert.assertEquals("surrender", parser.getWordFromIndex(14));
         Assert.assertEquals(2, parser.getIndexFromWord("baz"));
     }
+
+    @Test
+    public void RetrieveSentenceAsIndices() {
+        String[] multipleSentences = new String[] {
+                "Foo bar baz - the future fox",
+                "The quick brown fox jumped over the lazy fox.",
+                "Never give up; never surrender!"
+        };
+
+        CorpusParser parser = CorpusParser.buildFromSentenceStream(Arrays.stream(multipleSentences));
+
+        Assert.assertArrayEquals(new int[] {0, 1, 2, 3, 4, 5}, parser.getSentenceAsIndices(0));
+        Assert.assertArrayEquals(new int[] {3, 6, 7, 5, 8, 9, 3, 10, 5}, parser.getSentenceAsIndices(1));
+        Assert.assertArrayEquals(new int[] {11, 12, 13, 11, 14}, parser.getSentenceAsIndices(2));
+
+    }
 }
